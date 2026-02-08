@@ -1,59 +1,60 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import type { User } from '@/types/index';
-import { getUser, getAuthToken, clearAuth } from '@/lib/auth';
+import { getUser, getAuthToken, logout } from '@/lib/auth';
 
 interface AuthContextType {
-    user: User | null;
+    user: any | null;
     isAuthenticated: boolean;
-    isLoading: boolean;
-    login: (user: User) => void;
+    login: (email: string, name: string) => void;
     logout: () => void;
-    updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState<any | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // Check if user is already logged in
         const savedUser = getUser();
         const token = getAuthToken();
 
         if (savedUser && token) {
             setUser(savedUser);
+            setIsAuthenticated(true);
         }
 
-        setIsLoading(false);
+        setMounted(true);
     }, []);
 
-    const login = (userData: User) => {
-        setUser(userData);
+    const login = (email: string, name: string) => {
+        const newUser = { email, name, id: 'user_' + Math.random().toString(36).substr(2, 9) };
+        setUser(newUser);
+        setIsAuthenticated(true);
     };
 
-    const logout = () => {
-        clearAuth();
+    const handleLogout = () => {
+        logout();
         setUser(null);
+        setIsAuthenticated(false);
     };
 
-    const updateUser = (userData: User) => {
-        setUser(userData);
-    };
-
-    const authValue: AuthContextType = {
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        logout,
-        updateUser,
-    };
+    if (!mounted) {
+        return <>{children}</>;
+    }
 
     return (
-        <AuthContext.Provider value={authValue}>
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated,
+                login,
+                logout: handleLogout,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
