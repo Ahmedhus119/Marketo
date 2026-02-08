@@ -1,7 +1,9 @@
 'use client';
 
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/button';
 import { useCart } from '@/context/cart';
 
@@ -21,7 +23,7 @@ interface Toast {
     type: 'success' | 'error';
 }
 
-export default function ProductsPage() {
+function ProductsContent() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -67,9 +69,11 @@ export default function ProductsPage() {
     };
 
     const handleAddToCart = (product: Product) => {
-        const token = localStorage.getItem('authToken');
+        // Check if user is logged in
+        const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
 
         if (!token) {
+            addToast('Please login to add items to cart', 'error');
             router.push('/login');
             return;
         }
@@ -231,5 +235,20 @@ export default function ProductsPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={
+            <div className='min-h-screen flex items-center justify-center bg-gray-50'>
+                <div className='text-center'>
+                    <div className='w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4'></div>
+                    <p className='text-gray-600'>Loading products...</p>
+                </div>
+            </div>
+        }>
+            <ProductsContent />
+        </Suspense>
     );
 }
