@@ -11,65 +11,29 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "resolveJsonModule": true,
+    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "resolvePackageJsonExports": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "./dist",
-    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
-    "jsxImportSource": "react",
-    "types": [
-      "node",
-      "jest",
-      "@testing-library/jest-dom"
-    ],
+    "jsx": "react-jsx",
+    /* Next.js */
+    "incremental": true,
+    "strict": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
-      ],
-      "@/components/*": [
-        "./components/*"
-      ],
-      "@/lib/*": [
-        "./lib/*"
-      ],
-      "@/hooks/*": [
-        "./hooks/*"
-      ],
-      "@/context/*": [
-        "./context/*"
-      ],
-      "@/types/*": [
-        "./types/*"
-      ],
-      "@/styles/*": [
-        "./styles/*"
       ]
-    },
-    "allowJs": true,
-    "incremental": true,
-    "isolatedModules": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    "next-env.d.ts"
   ],
   "exclude": [
-    "node_modules",
-    "dist",
-    ".next"
+    "node_modules"
   ]
 }
